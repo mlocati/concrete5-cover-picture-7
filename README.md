@@ -1,6 +1,6 @@
 # Cover Picture add-on for concrete5 5.7 
 
-This is a bare of [Remo's Cover Picture add-on](https://github.com/Remo/concrete5-cover-picture) for concrete5 5.7.
+This is a bare port of [Remo's Cover Picture add-on](https://github.com/Remo/concrete5-cover-picture) to concrete5 5.7.
 
 This add-on allows you to show a picture and some text when you hover it.
 
