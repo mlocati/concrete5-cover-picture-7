@@ -12,8 +12,8 @@ use Concrete\Core\Asset\AssetList;
 class Controller extends Package
 {
     protected $pkgHandle = 'cover_picture_7';
-    protected $appVersionRequired = '5.7.5.9';
-    protected $pkgVersion = '1.0.0';
+    protected $appVersionRequired = '5.7.5';
+    protected $pkgVersion = '1.0.1';
 
     public function getPackageName()
     {

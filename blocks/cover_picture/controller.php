@@ -85,8 +85,10 @@ class Controller extends BlockController
      */
     public function on_page_view()
     {
-        $app = $this->app ? $this->app : Facade::getFacadeApplication();
+        $app = isset($this->app) ? $this->app : Facade::getFacadeApplication();
         $config = $app->make('config');
+
+        $this->requireAsset('javascript', 'jquery');
 
         // get current block template
         $template = $this->getCurrentTemplate();
@@ -135,9 +137,10 @@ class Controller extends BlockController
                 array(
                     'local' => true,
                     'minify' => false,
-                    'combine' => !true, // @todo Check why it does not work
+                    'combine' => true,
                 )
             );
+            $asset->setAssetPath($cachePath);
             $asset->setAssetURL($cacheRel);
             $this->requireAsset($asset);
         }
