@@ -67,24 +67,28 @@ $(document).ready(function() {
     var resizeCoverPicture = (function() {
         var timer = null;
         function resizeItem() {
-            var me = $(this), img = me.find('div.cover-picture-picture img');
-            me.find('div.cover-picture-overlay,div.cover-picture-text').height(img.height());
+            var me = $(this), img = me.find('div.cover-picture-picture img'), h = img.height();
+            me.height(h).find('div.cover-picture-overlay,div.cover-picture-text').height(img.height());
         }
         function resizeAll()
         {
             $('div.cover-picture').each(resizeItem);
         }
-        return function() {
+        return function(immediate) {
             if (timer !== null) {
                 clearTimeout(timer);
                 timer = null;
             }
-            timer = setTimeout(function() { timer = null; resizeAll(); }, 100);
+            if (immediate) {
+                resizeAll();
+            } else {
+                timer = setTimeout(function() { timer = null; resizeAll(); }, 10);
+            }
         };
     })();
             
     $(window).on('resize', resizeCoverPicture);
-    resizeCoverPicture();
+    resizeCoverPicture(true);
 });
 EOT
         );
