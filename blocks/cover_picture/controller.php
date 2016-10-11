@@ -55,13 +55,13 @@ class Controller extends BlockController
      */
     public function save($args)
     {
-        $args += [
+        $args += array(
             'content' => '',
             'fID' => 0,
             'overlayfID' => null,
             'overlayOpacity' => null,
             'overlayColor' => null,
-        ];
+        );
         $args['content'] = LinkAbstractor::translateTo($args['content']);
         $args['fID'] = (int) $args['fID'];
         $args['overlayfID'] = (int) $args['overlayfID'];
@@ -116,19 +116,19 @@ class Controller extends BlockController
             // cache file doesn't exist, rebuild it
             if (!file_exists($cachePath)) {
                 $parser = new Less_Parser(
-                    [
+                    array(
                         'cache_dir' => $cacheDir,
                         'compress' => true,
                         'sourceMap' => false,
-                    ]
+                    )
                 );
                 $overlayFile = $this->overlayfID ? File::getByID($this->overlayfID) : null;
-                $parser->ModifyVars([
+                $parser->ModifyVars(array(
                     'opacity' => $this->overlayOpacity,
                     'color' => $this->overlayColor,
                     'overlayPicture' => $overlayFile ? 'url('.$overlayFile->getRelativePath().')' : 'none',
                     'bID' => $this->bID,
-                ]);
+                ));
                 $parsed = $parser->parseFile($blockTemplateLessPath);
                 $css = $parsed->getCss();
                 file_put_contents($cachePath, $css);
@@ -136,11 +136,11 @@ class Controller extends BlockController
             $asset = new CssAsset($cssName);
             $asset->register(
                 $cacheRel,
-                [
+                array(
                     'local' => true,
                     'minify' => false,
                     'combine' => !true,
-                ]
+                )
             );
             $asset->setAssetPath($cachePath);
             $asset->setAssetURL($cacheRel);
