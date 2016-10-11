@@ -9,6 +9,7 @@ use Concrete\Core\Asset\CssAsset;
 use Concrete\Core\Editor\LinkAbstractor;
 use Concrete\Core\Support\Facade\Facade;
 use File;
+use Concrete\Core\Asset\AssetList;
 
 defined('C5_EXECUTE') or die('Access Denied.');
 
@@ -25,7 +26,7 @@ class Controller extends BlockController
     protected $btCacheBlockOutputLifetime = 0;
     protected $btSupportsInlineAdd = false;
     protected $btSupportsInlineEdit = false;
-    
+
     public function getBlockTypeName()
     {
         return t('Cover Picture');
@@ -54,13 +55,13 @@ class Controller extends BlockController
      */
     public function save($args)
     {
-        $args += array(
+        $args += [
             'content' => '',
             'fID' => 0,
             'overlayfID' => null,
             'overlayOpacity' => null,
             'overlayColor' => null,
-        );
+        ];
         $args['content'] = LinkAbstractor::translateTo($args['content']);
         $args['fID'] = (int) $args['fID'];
         $args['overlayfID'] = (int) $args['overlayfID'];
@@ -115,18 +116,19 @@ class Controller extends BlockController
             // cache file doesn't exist, rebuild it
             if (!file_exists($cachePath)) {
                 $parser = new Less_Parser(
-                    array(
+                    [
                         'cache_dir' => $cacheDir,
                         'compress' => true,
                         'sourceMap' => false,
-                    )
+                    ]
                 );
-                $parser->ModifyVars(array(
+                $overlayFile = $this->overlayfID ? File::getByID($this->overlayfID) : null;
+                $parser->ModifyVars([
                     'opacity' => $this->overlayOpacity,
                     'color' => $this->overlayColor,
-                    'overlayPicture' => $this->overlayfID ? 'url('.File::getByID($this->overlayfID)->getRelativePath().')' : 'none',
+                    'overlayPicture' => $overlayFile ? 'url('.$overlayFile->getRelativePath().')' : 'none',
                     'bID' => $this->bID,
-                ));
+                ]);
                 $parsed = $parser->parseFile($blockTemplateLessPath);
                 $css = $parsed->getCss();
                 file_put_contents($cachePath, $css);
@@ -134,15 +136,18 @@ class Controller extends BlockController
             $asset = new CssAsset($cssName);
             $asset->register(
                 $cacheRel,
-                array(
+                [
                     'local' => true,
                     'minify' => false,
-                    'combine' => true,
-                )
+                    'combine' => !true,
+                ]
             );
             $asset->setAssetPath($cachePath);
             $asset->setAssetURL($cacheRel);
             $this->requireAsset($asset);
+            if (version_compare($config->get('concrete.version'), '8.0.0b1') >= 0) {
+                AssetList::getInstance()->registerAsset($asset);
+            }
         }
         $this->requireAsset('javascript-inline', 'cover-picture');
     }
@@ -161,5 +166,4 @@ class Controller extends BlockController
     {
         return $this->content;
     }
-
 }
