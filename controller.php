@@ -64,6 +64,27 @@ $(document).ready(function() {
         event.preventDefault();
         $(this).toggleClass('cover-picture-active');
     });
+    var resizeCoverPicture = (function() {
+        var timer = null;
+        function resizeItem() {
+            var me = $(this), img = me.find('div.cover-picture-picture img');
+            me.find('div.cover-picture-overlay,div.cover-picture-text').height(img.height());
+        }
+        function resizeAll()
+        {
+            $('div.cover-picture').each(resizeItem);
+        }
+        return function() {
+            if (timer !== null) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            timer = setTimeout(function() { timer = null; resizeAll(); }, 100);
+        };
+    })();
+            
+    $(window).on('resize', resizeCoverPicture);
+    resizeCoverPicture();
 });
 EOT
         );
