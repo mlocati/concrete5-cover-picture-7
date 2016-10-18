@@ -68,7 +68,11 @@ $(document).ready(function() {
         var timer = null;
         function resizeItem() {
             var me = $(this), img = me.find('div.cover-picture-picture img'), h = img.height();
-            me.height(h).find('div.cover-picture-overlay,div.cover-picture-text').height(img.height());
+            if (h) {
+                me.height(h).find('div.cover-picture-overlay,div.cover-picture-text').height(h);
+            } else {
+                resizeCoverPicture(false);
+            }
         }
         function resizeAll()
         {
@@ -82,15 +86,14 @@ $(document).ready(function() {
             if (immediate) {
                 resizeAll();
             } else {
-                timer = setTimeout(function() { timer = null; resizeAll(); }, 10);
+                timer = setTimeout(function() { timer = null; resizeAll(); }, (immediate === false) ? 100 : 10);
             }
         };
     })();
-            
     $(window).on('resize', resizeCoverPicture);
     resizeCoverPicture(true);
 });
 EOT
         );
-}
+    }
 }
